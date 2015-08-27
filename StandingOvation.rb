@@ -8,7 +8,7 @@ class Solvy
 	end
 
 	def loadInput
-		File.foreach("ovation.in") do |line|
+		File.foreach("ovation-large.in") do |line|
   		 	if @numTestCases == 0
   		 		@numTestCases = line.to_i
   		 	else 
@@ -16,79 +16,57 @@ class Solvy
   		 	end 
 	  	end
 	end
-	
-	def to_s
-    	"Solvy: #{@numTestCases}-- (#{@testCases})\n"
-  	end
 
   	def outputSolution
-
 		solution = ""
   		@testCases.each_with_index do |item, index|
   			solution << "Case ##{index + 1}: #{item.solve}\n"
   		end
 
 		File.open("ovationOutput.txt", 'w') { |file| file.write(solution) }
-
   	end
 
 	class Audience
 
 		@maxShyness
 		@peoplePerShynessLevel
-		@totalPeople
 
 		def initialize(line)
-			
 			splitLine = line.split(' ')
-
 			@maxShyness = splitLine[0].to_i
 			@peoplePerShynessLevel = splitLine[1].to_s.chars.map(&:to_i)
-
-			@totalPeople = 0
-			@peoplePerShynessLevel.each { |p| @totalPeople+= p }
-
 		end
 
 		def solve
-
 			numAudienceSeeds = 0
 
 			@peoplePerShynessLevel.each_with_index do |item, index|
 
-				numLeft = numLeftSitting
-				if numLeftSitting = 0
-					return numAudienceSeeds
+				for n in @peoplePerShynessLevel[index]..10
+					standing = getNumStillStanding
+					if standing <= 0
+						return numAudienceSeeds
+					end
 
-				elsif @peoplePerShynessLevel[index] < 9
-
-					if 
-
-						@peoplePerShynessLevel[index] += 1
-						numAudienceSeeds += 1
+					@peoplePerShynessLevel[index] += 1
+					numAudienceSeeds += 1
 				end
 			end
-
 			numAudienceSeeds
 		end
 
-		def numLeftSitting 
-
+		def getNumStillStanding
 			numStanding = 0
 			@peoplePerShynessLevel.each_with_index do |item, index|
 				if numStanding >= index
 					numStanding += @peoplePerShynessLevel[index]
 				end
 			end
-			@totalPeople - numStanding
+			sum = 0
+			@peoplePerShynessLevel.each { |p| sum += p }
+			sum - numStanding
 		end
-
-		def to_s
-			"#{@totalPeople}: #{@peoplePerShynessLevel}"
-		end
-
 	end
-
 end 
 
 s = Solvy.new(0, Array.new)
