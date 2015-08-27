@@ -1,25 +1,25 @@
 class Solvy 
 
-	attr_accessor :testCases, :numTestCases
+	#attr_accessor :testCases, :numTestCases
 
-	def initialize(numTestCases, testCases)
-		@numTestCases = numTestCases
-		@testCases = testCases
+	def initialize
+		@test_cases = Array.new
+		@num_test_cases = 0
 	end
 
-	def loadInput
+	def load_input
 		File.foreach("ovation-large.in") do |line|
-  		 	if @numTestCases == 0
-  		 		@numTestCases = line.to_i
+  		 	if @num_test_cases == 0
+  		 		@num_test_cases = line.to_i
   		 	else 
-  		 		@testCases.push(Audience.new(line))
+  		 		@test_cases.push(Audience.new(line))
   		 	end 
 	  	end
 	end
 
-  	def outputSolution
+  	def output_solution
 		solution = ""
-  		@testCases.each_with_index do |item, index|
+  		@test_cases.each_with_index do |item, index|
   			solution << "Case ##{index + 1}: #{item.solve}\n"
   		end
 
@@ -28,47 +28,44 @@ class Solvy
 
 	class Audience
 
-		@maxShyness
-		@peoplePerShynessLevel
-
 		def initialize(line)
-			splitLine = line.split(' ')
-			@maxShyness = splitLine[0].to_i
-			@peoplePerShynessLevel = splitLine[1].to_s.chars.map(&:to_i)
+			split_line = line.split(' ')
+			#@max_shyness = split_line[0].to_i
+			@people_per_shyness_level = split_line[1].to_s.chars.map(&:to_i)
 		end
 
 		def solve
-			numAudienceSeeds = 0
+			num_audience_seeds = 0
 
-			@peoplePerShynessLevel.each_with_index do |item, index|
+			@people_per_shyness_level.each_with_index do |item, index|
 
-				for n in @peoplePerShynessLevel[index]..10
-					standing = getNumStillStanding
+				for n in @people_per_shyness_level[index]..10
+					standing = get_num_still_sitting
 					if standing <= 0
-						return numAudienceSeeds
+						return num_audience_seeds
 					end
 
-					@peoplePerShynessLevel[index] += 1
-					numAudienceSeeds += 1
+					@people_per_shyness_level[index] += 1
+					num_audience_seeds += 1
 				end
 			end
-			numAudienceSeeds
+			num_audience_seeds
 		end
 
-		def getNumStillStanding
-			numStanding = 0
-			@peoplePerShynessLevel.each_with_index do |item, index|
-				if numStanding >= index
-					numStanding += @peoplePerShynessLevel[index]
+		def get_num_still_sitting
+			num_standing = 0
+			@people_per_shyness_level.each_with_index do |item, index|
+				if num_standing >= index
+					num_standing += @people_per_shyness_level[index]
 				end
 			end
 			sum = 0
-			@peoplePerShynessLevel.each { |p| sum += p }
-			sum - numStanding
+			@people_per_shyness_level.each { |p| sum += p }
+			sum - num_standing
 		end
 	end
 end 
 
-s = Solvy.new(0, Array.new)
-s.loadInput
-s.outputSolution
+s = Solvy.new()
+s.load_input
+s.output_solution
